@@ -1,0 +1,493 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="theme-color" content="#72d9ff"><title>CURSED SAIYAN: ECLIPSE REALM</title><style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;overscroll-behavior:none;background:#82d8ff;font-family:system-ui,Arial;color:white}canvas{display:block;touch-action:none;max-width:100vw;max-height:100vh}#csrGraphicsPanel{font-size:12px;max-width:calc(100vw - 20px)}button{touch-action:manipulation}#ui{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}#ui{position:fixed;inset:0;pointer-events:none;text-shadow:0 2px 4px #17233b} .panel{background:linear-gradient(135deg,#172d4bd9,#122039c9);border:1px solid #b6f5ff77;border-radius:14px;box-shadow:0 6px 24px #17354c33;padding:10px 13px;backdrop-filter:blur(6px)}#brand{position:absolute;left:14px;top:12px;font-weight:900;letter-spacing:1.5px;font-size:13px;color:#dffaff}#stats{position:absolute;left:14px;top:44px;width:210px;font-size:12px} .bar{height:7px;background:#24344d;border-radius:9px;overflow:hidden;margin:4px 0 8px}.fill{height:100%;width:100%;background:linear-gradient(90deg,#42f5a7,#a5ffcb)}#ki{background:linear-gradient(90deg,#39caff,#a9f4ff)}#objective{position:absolute;right:14px;top:14px;width:min(290px,55vw);font-size:12px}#objective b{color:#ffe68c}#hint{position:absolute;left:50%;top:16px;transform:translateX(-50%);font-size:12px;text-align:center;color:#fff;max-width:45vw}#bottom{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);display:flex;gap:7px;align-items:center;white-space:nowrap}button{pointer-events:auto;color:white;background:#152e4fe8;border:1px solid #a9f7ff88;border-radius:12px;padding:10px 13px;font-weight:800;cursor:pointer;box-shadow:0 4px 0 #07142666}button:active{transform:translateY(2px)}#right{position:absolute;right:12px;bottom:14px;display:grid;grid-template-columns:repeat(2,58px);gap:8px}#right button{height:54px;padding:4px;font-size:10px}#left{position:absolute;left:12px;bottom:20px;width:120px;height:120px;border-radius:50%;background:#0e294344;border:1px solid #ffffff66;pointer-events:auto;touch-action:none}#stick{position:absolute;left:35px;top:35px;width:50px;height:50px;border-radius:50%;background:#d7faffaa;border:2px solid white;pointer-events:none}#menu,#missions,#dialog{position:fixed;inset:0;display:none;place-items:center;background:#071528aa;backdrop-filter:blur(8px);pointer-events:auto}#menu .sheet,#missions .sheet,#dialog .sheet{width:min(720px,92vw);max-height:86vh;overflow:auto;padding:22px;border-radius:22px;background:linear-gradient(145deg,#153453f5,#131b36f7);border:1px solid #a5f8ff88}h1{margin:0 0 8px;font-size:clamp(24px,5vw,42px);line-height:1.05}h2{margin:0 0 12px;color:#b8f7ff}p{color:#d3e8f5;line-height:1.5}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}.tile{padding:12px;border:1px solid #ffffff30;border-radius:12px;background:#ffffff0b}.tile small{display:block;color:#b8ccdf;margin-top:5px}#toast{position:absolute;left:50%;top:27%;transform:translateX(-50%);background:#071528dd;border:1px solid #9ef5ff99;padding:12px 18px;border-radius:14px;display:none;text-align:center;font-weight:800;max-width:85vw}#maptag{position:absolute;right:14px;bottom:145px;font-size:10px;color:#dffaff}#reticle{position:absolute;left:50%;top:50%;width:18px;height:18px;border:1px solid #ffffff88;border-radius:50%;transform:translate(-50%,-50%);opacity:.65}@media(min-width:800px){#left{display:none}#right{grid-template-columns:repeat(4,58px)}#stats{width:235px}}
+</style></head><body>
+<div id="csrGraphicsPanel" style="position:fixed;z-index:10000;left:10px;bottom:10px;top:auto;right:auto;width:min(300px,calc(100vw - 20px));max-height:38vh;overflow:auto;background:rgba(5,12,27,.94);color:#eaf6ff;border:1px solid #79dfff99;border-radius:12px;padding:11px;box-shadow:0 8px 28px #0008;font:12px/1.4 system-ui,sans-serif;pointer-events:auto">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><b style="font-size:14px">GRAPHICS / DEV STATS</b><button id="csrGraphicsToggle" style="padding:5px 8px;border-radius:7px">Hide</button></div>
+  <div id="csrGraphicsControls" style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px">
+    <label>Resolution<select id="csrResolution" style="display:block;width:100%;margin-top:3px;padding:6px;background:#142742;color:white;border-radius:6px"><option value="640x360">640 × 360</option><option value="1280x720">720p HD</option><option value="1920x1080">1080p</option><option value="2560x1440">1440p</option><option value="3840x2160" selected>4K / 2160p (3840 × 2160)</option></select></label>
+    <label>FPS target<select id="csrFps" style="display:block;width:100%;margin-top:3px;padding:6px;background:#142742;color:white;border-radius:6px"><option value="30">30 FPS</option><option value="40" selected>40 FPS</option><option value="60">60 FPS</option></select></label>
+    <label>Quality<select id="csrQuality" style="display:block;width:100%;margin-top:3px;padding:6px;background:#142742;color:white;border-radius:6px"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option><option value="ultra">Ultra / 4K textures</option></select></label>
+    <label>Triangle budget<select id="csrTriBudget" style="display:block;width:100%;margin-top:3px;padding:6px;background:#142742;color:white;border-radius:6px"><option value="50000">50,000</option><option value="150000">150,000</option><option value="300000">300,000</option><option value="600000">600,000</option><option value="1000000">1,000,000</option><option value="5000000">5,000,000</option><option value="10000000">10,000,000</option><option value="100000000">100,000,000</option><option value="999000000" selected>999,000,000 (theoretical cap)</option></select></label>
+  </div>
+  <div id="csrHardwareSpecs" style="margin-top:8px;padding:8px;background:#1a2034;border:1px solid #e0b65b77;border-radius:7px">
+    <b style="color:#ffd980">TARGET SPECS · FUTURE HIGH-DETAIL BUILD</b>
+    <div style="margin-top:4px">Recommended GPU: NVIDIA GeForce GTX 960 or AMD Radeon R9 280X (2 GB VRAM)</div>
+    <div>Alternative listed GPU: NVIDIA GeForce GTX 750 Ti or AMD Radeon HD 7950 (2 GB VRAM)</div>
+    <div>Planned full asset build storage: approximately 36–40 GB</div>
+    <div style="opacity:.72;margin-top:4px">These are target specs for a future expanded build, not requirements for this small browser prototype.</div>
+  </div>
+  <div id="csrGraphicsStatus" style="margin-top:8px;padding:7px;background:#122039;border-radius:7px">Reading renderer…</div>
+  <div id="csrGraphicsStats" style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:7px"></div>
+  <div style="margin-top:7px;opacity:.72;font-size:11px">Triangle budget is a monitoring threshold, not a command to generate that many triangles. 999 million is a theoretical ceiling and is not a realistic per-frame target. 4K selects a 3840 × 2160 render buffer where supported. FPS is a cap/target, not a guarantee. Ultra enables higher render scale and texture filtering; actual 4K texture detail requires 4K source texture assets.</div>
+</div>
+<div id="ui"><div id="brand">✦ CURSED SAIYAN <span style="color:#9ef7ff">/ ECLIPSE REALM</span></div><div id="stats" class="panel"><div><b id="playerName">ADEN</b> · Lv <span id="level">1</span> · <span id="zone">Verdant Frontier</span></div><div style="margin-top:7px">VITALITY <span id="hpnum">100/100</span></div><div class="bar"><div id="hp" class="fill"></div></div><div>KI <span id="kinum">100/100</span></div><div class="bar"><div id="ki" class="fill"></div></div><div style="font-size:10px;color:#b8e9ff">POWER <b id="power">1,250</b> · ZENKAI <b id="zenkai">0</b></div></div><div id="hint">WASD / left stick to move · drag to rotate · E interact</div><div id="objective" class="panel"><b>MAIN STORY</b><div id="questTitle" style="font-weight:900;font-size:15px;margin:4px 0">The Sky Has Cracked</div><div id="questDesc">Investigate the airplane wreckage tangled with your friends’ van.</div><div style="margin-top:7px;color:#a8f6ff">OBJECTIVE <span id="progress">0 / 1</span></div></div><div id="reticle"></div><div id="toast"></div><div id="maptag">◉ FRONTIER SECTOR · SAFE ZONE</div><div id="left"><div id="stick"></div></div><div id="right"><button id="hit">⚔<br>STRIKE</button><button id="blast">✦<br>KI BLAST</button><button id="domain">◉<br>DOMAIN</button><button id="fly">↑<br>FLY</button></div><div id="bottom"><button id="talk">E · INTERACT</button><button id="missionBtn">MISSIONS</button><button id="menuBtn">☰ MENU</button></div></div>
+<div id="menu"><div class="sheet"><h1>CURSED SAIYAN</h1><p>You and your friends were on a trip when an isekai airplane crashed into your van. You wake in a Capsule Corp lab as mysterious bio-engineered inventions with Saiyan-like powers. Find your friends, learn who made you, and uncover why the crash happened.</p><div class="grid"><div class="tile"><b>CONTINUE</b><small>Autosaves on this device</small><button id="resume">Return to game</button></div><div class="tile"><b>TRAINING</b><small>Build strength and ki control</small><button id="train">Train + XP</button></div><div class="tile"><b>TRAVEL</b><small>Switch explorable regions</small><button id="travel">Next region</button></div><div class="tile"><b>ZENKAI</b><small>Unlock after level 100</small><button id="zenkaiBtn">Zenkai reset</button></div></div><p>Controls: WASD / arrows, Shift to dash, Space to jump/fly, J strike, K ki blast, L Domain, E interact. On mobile use the left stick and action buttons.</p><button id="closeMenu">CLOSE</button></div></div>
+<div id="missions"><div class="sheet"><h2>MISSION ARCHIVE</h2><p>Story records and repeatable field jobs. Select a mission to track it.</p><div id="missionList" class="grid"></div><p><button id="closeMissions">CLOSE</button></p></div></div><div id="dialog"><div class="sheet"><h2 id="dialogTitle">Signal detected</h2><p id="dialogText"></p><button id="dialogOk">CONTINUE</button></div></div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script><script>
+(()=>{const $=id=>document.getElementById(id);const missions=[['The Isekai Collision','Explore the crash site where an airplane slammed into your friends’ van.'],['Who Made Us?','Wake in a Capsule Corp laboratory and learn that you are bio-engineered inventions.'],['The Friend Group Protocol','Find your friends and compare your strange new bodies and powers.'],['Capsule Corp Orientation','Meet the researchers and inspect the bio-invention records.'],['First Field Test','Defeat three training drones without damaging the outpost.'],['The Black Box','Recover the airplane recorder from the wreckage.'],['Prototype Saiyan','Unlock your first transformation in the gravity chamber.'],['Cursed Ki Event','Investigate the violet energy leaking from the crash site.'],['The Lab Below','Discover the hidden facility where your bodies were created.'],['Escape Protocol','Decide whether to trust Capsule Corp or find your own answers.'],['The Friends Reunited','Bring the group together before the Eclipse response team arrives.'],['The First Domain','Survive a controlled domain simulation.'],['The Bio-Invention Files','Uncover why Capsule Corp built bodies based on Saiyan biology.'],['The Sky We Fell From','Find a way to contact your original world.'],['Cursed Stray Sweep','Clear a local beast pack.'],['Frontier Patrol','Visit three beacon points.'],['Core Collector','Collect energy cores from enemies.'],['Domain Test','Use your Domain against an elite foe.']];let savedData={};try{savedData=JSON.parse(localStorage.getItem('csr-save')||'{}')||{}}catch(e){localStorage.removeItem('csr-save')}const num=(v,d,min=0,max=1e9)=>Number.isFinite(Number(v))?Math.max(min,Math.min(max,Number(v))):d;let state={level:num(savedData.level,1,1,100),xp:num(savedData.xp,0,0,1e7),zenkai:num(savedData.zenkai,0,0,1000),power:num(savedData.power,1250,1,1e15),hp:100,ki:100,zone:num(savedData.zone,0,0,3),quest:num(savedData.quest,0,0,17),kills:num(savedData.kills,0,0,1e9),questKills:num(savedData.questKills,0,0,1e9),fly:false};const zones=[{name:'Verdant Frontier',grass:0x6ebc58,sky:0x79d5ff,rock:0x858c9a},{name:'Capsule Coast',grass:0x64b5a5,sky:0x8bdcff,rock:0x718d9e},{name:'Eclipse Badlands',grass:0xc8a15f,sky:0xf0b98a,rock:0x987a75},{name:'King’s Rift',grass:0x6b648f,sky:0x6656a6,rock:0x514a73}];let scene,camera,renderer,player,playerAura,clock,move={x:0,z:0},yaw=0,pitch=.15,keys={},enemies=[],beacons=[],particles=[],last=0,toastTimer=0;try{scene=new THREE.Scene();camera=new THREE.PerspectiveCamera(65,innerWidth/innerHeight,.1,900);renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,1.35));window.__csrRenderer=renderer;window.__csrScene=scene;window.__csrCamera=camera;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;document.body.prepend(renderer.domElement);clock=new THREE.Clock();}catch(e){document.body.innerHTML='This device browser could not start the 3D game. Try a recent Chrome browser.';return}scene.background=new THREE.Color(zones[0].sky);scene.fog=new THREE.Fog(zones[0].sky,80,300);scene.add(new THREE.HemisphereLight(0xd8f6ff,0x61714c,2.1));let sun=new THREE.DirectionalLight(0xfff1ce,3.2);sun.position.set(-60,100,40);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);scene.add(sun);const mat=(c,rough=1)=>new THREE.MeshStandardMaterial({color:c,roughness:rough,flatShading:true});const grassMat=mat(zones[0].grass),rockMat=mat(zones[0].rock),trunk=mat(0x755139),leaf=mat(0x329e5a),white=mat(0xf2f7ff),blue=mat(0x2876e8),orange=mat(0xff8c25),black=mat(0x17233d),gold=mat(0xffd55e),purple=mat(0x8b48d8),enemyMat=mat(0x793c9d);const ground=new THREE.Mesh(new THREE.PlaneGeometry(700,700,70,70),grassMat);ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);function mesh(g,m,x,y,z,sx=1,sy=1,sz=1){let o=new THREE.Mesh(g,m);o.position.set(x,y,z);o.scale.set(sx,sy,sz);o.castShadow=true;o.receiveShadow=true;scene.add(o);return o}function tree(x,z){mesh(new THREE.CylinderGeometry(.3,.5,3,7),trunk,x,1.5,z);let a=mesh(new THREE.ConeGeometry(2.4,5,7),leaf,x,4,z);a.rotation.y=Math.random()*3}function mountain(x,z,s){let m=mesh(new THREE.ConeGeometry(s, s*1.8, 7),rockMat,x,s*.75,z,s*1.4,1,s*.9);m.rotation.y=Math.random()*3}function makeAnimeFighter(opts={}){
+  const g=new THREE.Group();g.userData.animParts={arms:[],legs:[]};
+  const skin=mat(opts.skin||0xe8b28a), hair=mat(opts.hair||0x17182a), outfit=mat(opts.outfit||0x2876e8),
+    undershirt=mat(opts.undershirt||0xf2f5ff), trim=mat(opts.trim||0xf5c84b),
+    pants=mat(opts.pants||opts.outfit||0x2876e8), boots=mat(opts.boots||0x202a40),
+    glove=mat(opts.glove||0xf2f5ff), eyeWhite=mat(0xfffbf0), iris=mat(opts.iris||0x262d42),
+    mouthMat=mat(0x713c3c), dark=mat(0x202236), armor=mat(opts.armor||0x28394f);
+  const add=(geo,material,x,y,z,sx=1,sy=1,sz=1)=>{
+    const o=new THREE.Mesh(geo,material);o.position.set(x,y,z);o.scale.set(sx,sy,sz);
+    o.castShadow=true;o.receiveShadow=true;g.add(o);return o;
+  };
+  // Athletic, muscular anime silhouette: broad chest, tapered waist, visible pectoral and shoulder forms.
+  add(new THREE.CylinderGeometry(.43,.48,.88,10),outfit,0,1.72,0);
+  add(new THREE.BoxGeometry(.94,.43,.49),outfit,0,1.95,0);
+  add(new THREE.SphereGeometry(.24,10,8),outfit,-.22,1.93,.22,1.2,.72,.72);
+  add(new THREE.SphereGeometry(.24,10,8),outfit,.22,1.93,.22,1.2,.72,.72);
+  add(new THREE.SphereGeometry(.16,9,7),outfit,-.22,1.68,.22,1,.9,.65);
+  add(new THREE.SphereGeometry(.16,9,7),outfit,.22,1.68,.22,1,.9,.65);
+  add(new THREE.BoxGeometry(.50,.13,.37),outfit,0,1.47,.13);
+  add(new THREE.BoxGeometry(.42,.58,.16),undershirt,0,1.94,.255);
+  // Layered collar and belt with a central emblem.
+  const collar=add(new THREE.ConeGeometry(.22,.28,4),undershirt,0,2.14,.22);collar.rotation.x=Math.PI;
+  add(new THREE.CylinderGeometry(.43,.43,.12,8),trim,0,1.35,0);
+  add(new THREE.BoxGeometry(.19,.16,.08),armor,0,1.35,.29);
+  // Neck and face, front is +Z.
+  add(new THREE.CylinderGeometry(.13,.15,.22,8),skin,0,2.28,0);
+  add(new THREE.SphereGeometry(.34,12,10),skin,0,2.58,.035,1,.99,.88);
+  // Jaw/chin, ears, nose and mouth make the face readable at game distance.
+  add(new THREE.SphereGeometry(.16,8,7),skin,0,2.39,.09,1,.55,.7);
+  for(const side of [-1,1]){
+    add(new THREE.SphereGeometry(.075,8,7),skin,side*.335,2.57,0,.7,1,.7);
+    add(new THREE.SphereGeometry(.072,10,8),eyeWhite,side*.13,2.61,.315,1,.78,.45);
+    add(new THREE.SphereGeometry(.035,8,6),iris,side*.13,2.61,.348,1,1,.5);
+    const brow=add(new THREE.BoxGeometry(.15,.045,.045),dark,side*.13,2.71,.32);
+    brow.rotation.z=side===-1?-.16:.16;
+  }
+  add(new THREE.ConeGeometry(.055,.15,5),skin,0,2.53,.355);
+  add(new THREE.BoxGeometry(.13,.025,.025),mouthMat,0,2.405,.30);
+  // Iconic original spiked hairstyle: multiple angular cones swept up and back.
+  add(new THREE.SphereGeometry(.30,9,7),hair,0,2.84,0,1,.58,.95);
+  const spikeCount=opts.spikes||7;
+  for(let i=0;i<spikeCount;i++){
+    const angle=(i/spikeCount)*Math.PI*2;
+    const radius=i<3?.14:.23;
+    const spike=add(new THREE.ConeGeometry(i<3?.17:.14,.55+(i%3)*.12,5),hair,
+      Math.sin(angle)*radius,3.03+(i%2)*.035,Math.cos(angle)*radius-.015);
+    spike.rotation.x=-.2-Math.cos(angle)*.55;
+    spike.rotation.z=Math.sin(angle)*.55;
+  }
+  // Arms, wrist guards and hands.
+  for(const side of [-1,1]){
+    const arm=add(new THREE.CylinderGeometry(.14,.18,.62,8),skin,side*.59,1.70,.015);
+    arm.rotation.z=side*-.12;g.userData.animParts.arms.push(arm);
+    const sleeve=add(new THREE.CylinderGeometry(.19,.21,.25,8),outfit,side*.60,1.98,0);g.userData.animParts.arms.push(sleeve);
+    add(new THREE.SphereGeometry(.17,9,7),skin,side*.60,1.49,.025,1,.9,.9);
+    add(new THREE.CylinderGeometry(.145,.16,.16,7),glove,side*.60,1.32,.015);
+    add(new THREE.SphereGeometry(.13,8,7),skin,side*.60,1.21,.025);
+    // Baggy tapered trousers and boots.
+    const leg=add(new THREE.CylinderGeometry(.17,.22,.72,8),pants,side*.235,.82,0);g.userData.animParts.legs.push(leg);
+    add(new THREE.BoxGeometry(.3,.16,.43),boots,side*.235,.31,.065);
+    add(new THREE.BoxGeometry(.3,.07,.45),trim,side*.235,.39,.065);
+  }
+  // Shoulder pads and diagonal gi/armor accents.
+  for(const side of [-1,1]){
+    const pad=add(new THREE.SphereGeometry(.24,8,6),opts.armored?armor:outfit,side*.48,2.04,0,1,.58,1);
+    if(opts.armored){
+      add(new THREE.BoxGeometry(.12,.35,.42),trim,side*.48,1.91,.11);
+    }
+  }
+  // Short sash trailing behind the waist.
+  const sash=add(new THREE.BoxGeometry(.18,.55,.07),opts.sash||trim,.28,1.12,-.28);
+  sash.rotation.z=-.35;
+  return g;
+}
+function makePlayer(){
+  player=makeAnimeFighter({skin:0xe8b28a,hair:0x17182a,outfit:0x2876e8,undershirt:0xf6f8ff,
+    pants:0x2876e8,boots:0x192942,trim:0xffb83e,glove:0xf2f6ff,spikes:8});
+  playerAura=new THREE.Mesh(new THREE.SphereGeometry(1.25,16,12),
+    new THREE.MeshBasicMaterial({color:0x73eaff,transparent:true,opacity:.1,wireframe:true}));
+  playerAura.position.y=1.5;player.add(playerAura);scene.add(player);player.position.set(0,0,0);
+}
+makePlayer();function buildZone(){// remove old world except player and lights
+ for(let o of [...scene.children])if(o!==player&&o!==sun&&!(o.isLight)&&o!==ground&&o!==scene.fog){scene.remove(o);if(o.geometry)o.geometry.dispose();}enemies=[];beacons=[];let z=zones[state.zone%zones.length];scene.background.set(z.sky);scene.fog.color.set(z.sky);grassMat.color.set(z.grass);rockMat.color.set(z.rock);ground.material=grassMat;
+ for(let i=0;i<42;i++){let x=(Math.random()-.5)*300,zz=(Math.random()-.5)*300;if(Math.hypot(x,zz)<16)continue;if(i%3)tree(x,zz);else mountain(x,zz,7+Math.random()*15)}
+ // crystal river and bridge
+ let river=mesh(new THREE.PlaneGeometry(28,220),mat(0x31c4e6,.25),-38,.08,15);river.rotation.x=-Math.PI/2;river.rotation.z=.15;
+ for(let i=0;i<5;i++){let x=20+(i%3)*3,z=-18+Math.floor(i/3)*8;let b=mesh(new THREE.DodecahedronGeometry(1.2,0),mat(i%2?0x58efff:0xb6f9ff,.3),x,1.3,z);b.userData.beacon=i;beacons.push(b)}
+ // Isekai crash site: the airplane has ploughed into the friends’ van.
+ // Simple stylised wreckage is intentionally built from low-cost primitives to keep the prototype stable.
+ const wreckMetal=mat(0x667789,.72), wreckDark=mat(0x27384b,.85), vanPaint=mat(0xe9f2f6,.45), glass= new THREE.MeshStandardMaterial({color:0x3f8fae,roughness:.25,metalness:.25});
+ // Van body and wheels
+ mesh(new THREE.BoxGeometry(5.8,2.1,2.7),vanPaint,-8,1.15,1);
+ mesh(new THREE.BoxGeometry(2.4,1.35,2.55),vanPaint,-9.2,2.75,1);
+ mesh(new THREE.BoxGeometry(2.1,.9,.08),glass,-9.2,2.82,2.31);
+ for(const wx of [-10,-6])for(const wz of [-.25,2.25])mesh(new THREE.CylinderGeometry(.48,.48,.22,12),wreckDark,wx,.48,wz,1,1,1).rotation.z=Math.PI/2;
+ // Broken airplane fuselage, bent wing and tail
+ const fuselage=mesh(new THREE.CylinderGeometry(.72,.95,9,12),wreckMetal,-10,2.25,-3,1,1,1);fuselage.rotation.x=Math.PI/2;fuselage.rotation.z=-.22;
+ const wing=mesh(new THREE.BoxGeometry(8,.18,1.65),wreckMetal,-10.4,2.2,-3.8);wing.rotation.y=-.24;wing.rotation.z=.18;
+ const brokenWing=mesh(new THREE.BoxGeometry(3.2,.16,1.2),wreckMetal,-5.8,1.9,-4.7);brokenWing.rotation.y=.62;brokenWing.rotation.z=-.38;
+ const tail=mesh(new THREE.BoxGeometry(1.7,1.8,.18),wreckMetal,-13.5,2.8,-2.3);tail.rotation.z=-.35;
+ for(let i=0;i<9;i++){const debris=mesh(new THREE.DodecahedronGeometry(.18+Math.random()*.35,0),i%2?wreckDark:wreckMetal,-12+Math.random()*8,.25+Math.random()*1.8,-7+Math.random()*7);debris.rotation.set(Math.random()*3,Math.random()*3,Math.random()*3)}
+ // Capsule Corp recovery marker near the collision
+ const crashBeacon=mesh(new THREE.OctahedronGeometry(.8,1),mat(0x8c53ff,.25),-5,3.2,-7);crashBeacon.userData.beacon=99;beacons.push(crashBeacon);
+ // capsule outpost
+ let building=mesh(new THREE.CylinderGeometry(5,5,7,12),white,12,3.5,-15);let roof=mesh(new THREE.SphereGeometry(5,12,8,0,Math.PI*2,0,Math.PI/2),blue,12,7,-15);let sign=mesh(new THREE.BoxGeometry(6,1,0.25),gold,12,5,-9);
+ for(let i=0;i<5;i++)spawnEnemy(-15+Math.random()*30,18+Math.random()*45,i===4);player.position.set(0,0,0);showToast(z.name+' discovered')}
+function spawnEnemy(x,z,boss=false){
+  const palette=boss?
+    {skin:0xd79b8c,hair:0x25152e,outfit:0x721d4c,undershirt:0x25152e,pants:0x4d193b,boots:0x1d1429,trim:0xff526f,glove:0x3a1c35,iris:0xffb14a,armor:0x32142e,armored:true,spikes:10}:
+    {skin:0xb98270,hair:0x312039,outfit:0x793c9d,undershirt:0xe6d8ff,pants:0x4d3274,boots:0x29223b,trim:0xe9b6ff,glove:0xe6d8ff,iris:0xff405b,armored:false,spikes:6};
+  const g=makeAnimeFighter(palette);
+  if(boss){
+    const aura=new THREE.Mesh(new THREE.SphereGeometry(1.45,12,10),
+      new THREE.MeshBasicMaterial({color:0xff285e,transparent:true,opacity:.09,wireframe:true}));
+    aura.position.y=1.5;g.add(aura);
+  }
+  g.scale.setScalar(boss?1.22:1);
+  g.position.set(x,0,z);g.userData={hp:boss?180:55,max:boss?180:55,boss,hit:0};
+  scene.add(g);enemies.push(g);
+}function save(){try{localStorage.setItem('csr-save',JSON.stringify({level:state.level,xp:state.xp,zenkai:state.zenkai,power:state.power,zone:state.zone,quest:state.quest,kills:state.kills,questKills:state.questKills}))}catch(e){showToast('Save unavailable in this browser session')}}function updateUI(){ $('level').textContent=state.level;$('zone').textContent=zones[state.zone].name;$('power').textContent=state.power.toLocaleString();$('zenkai').textContent=state.zenkai;$('hpnum').textContent=Math.ceil(state.hp)+'/100';$('kinum').textContent=Math.ceil(state.ki)+'/100';$('hp').style.width=state.hp+'%';$('ki').style.width=state.ki+'%';let q=missions[state.quest%missions.length];$('questTitle').textContent=q[0];$('questDesc').textContent=q[1];$('progress').textContent=state.kills+' / '+(state.quest===2?3:1)}function showToast(t){$('toast').textContent=t;$('toast').style.display='block';toastTimer=2.5}function dialog(title,text){$('dialogTitle').textContent=title;$('dialogText').textContent=text;$('dialog').style.display='grid'}function completeQuest(){state.questKills=0;state.xp+=120;state.power+=250;state.quest=(state.quest+1)%missions.length;showToast('MISSION COMPLETE · +120 XP · +250 POWER');if(state.xp>=state.level*100){state.xp=0;state.level++;state.power+=500;dialog('LEVEL UP!','Level '+state.level+' reached. Your hybrid Saiyan-cursed energy grows stronger.')}save();updateUI()}
+let audioCtx=null,combatAnim={type:'',time:0,duration:0},domainVisual=null;
+function sound(kind='hit'){
+ try{audioCtx=audioCtx||(new (window.AudioContext||window.webkitAudioContext)());if(audioCtx.state==='suspended')audioCtx.resume();const now=audioCtx.currentTime;
+  const osc=audioCtx.createOscillator(),gain=audioCtx.createGain(),filter=audioCtx.createBiquadFilter();
+  const cfg={strike:[115,58,.13,'triangle'],blast:[260,72,.32,'sawtooth'],hit:[90,38,.16,'square'],implode:[420,55,.55,'sine'],explode:[65,28,.48,'sawtooth'],domain:[180,42,.9,'sawtooth']};const c=cfg[kind]||cfg.hit;
+  osc.type=c[3];osc.frequency.setValueAtTime(c[0],now);osc.frequency.exponentialRampToValueAtTime(c[1],now+c[2]);filter.type='lowpass';filter.frequency.setValueAtTime(kind==='domain'?1200:1800,now);filter.frequency.exponentialRampToValueAtTime(120,now+c[2]);gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(kind==='domain'?.22:.13,now+.015);gain.gain.exponentialRampToValueAtTime(.0001,now+c[2]);osc.connect(filter);filter.connect(gain);gain.connect(audioCtx.destination);osc.start(now);osc.stop(now+c[2]+.02);
+  if(kind==='explode'||kind==='hit'){const n=audioCtx.createBufferSource(),buf=audioCtx.createBuffer(1,Math.floor(audioCtx.sampleRate*.12),audioCtx.sampleRate),a=buf.getChannelData(0);for(let i=0;i<a.length;i++)a[i]=(Math.random()*2-1)*(1-i/a.length);n.buffer=buf;const ng=audioCtx.createGain();ng.gain.value=kind==='explode'?.12:.055;n.connect(ng);ng.connect(audioCtx.destination);n.start(now+.015)}
+ }catch(e){}
+}
+function animateAttack(type){combatAnim={type,time:0,duration:type==='domain'?2.6:type==='blast'?0.62:.42};if(type==='domain'){playerAura.material.color.set(0x9c45ff);playerAura.material.opacity=.34;showToast('DOMAIN EXPANSION · ECLIPSE DOMINION');}else if(type==='blast')showToast('CURSED KI · RELEASE!');}
+function spawnBurst(pos,color=0x9c45ff,mode='explode',count=28){sound(mode);const core=mesh(new THREE.SphereGeometry(.55,10,8),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.85}),pos.x,pos.y,pos.z);particles.push({o:core,t:.38,kind:mode,base:.55});for(let i=0;i<count;i++){const geo=new THREE.SphereGeometry(.07+Math.random()*.11,5,4),m=new THREE.MeshBasicMaterial({color:[color,0xffffff,0x66eaff][i%3],transparent:true,opacity:.95});const o=new THREE.Mesh(geo,m);o.position.copy(pos);scene.add(o);const v=new THREE.Vector3(Math.random()-.5,Math.random()*.9,Math.random()-.5).normalize().multiplyScalar(mode==='implode'?(1+Math.random()*4): (3+Math.random()*10));particles.push({o,t:.45+Math.random()*.65,v,kind:mode,base:1})}}
+function makeDomainEffect(){if(domainVisual){scene.remove(domainVisual);domainVisual.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material)o.material.dispose()})}domainVisual=new THREE.Group();const ringMat=new THREE.MeshBasicMaterial({color:0x9a48ff,transparent:true,opacity:.45,wireframe:true});const ring=new THREE.Mesh(new THREE.SphereGeometry(1,24,16),ringMat);ring.scale.set(1,1.15,1);domainVisual.add(ring);const floor=new THREE.Mesh(new THREE.TorusGeometry(5.5,.12,8,48),new THREE.MeshBasicMaterial({color:0xc8a5ff,transparent:true,opacity:.8}));floor.rotation.x=Math.PI/2;floor.position.y=.08;domainVisual.add(floor);domainVisual.position.copy(player.position);domainVisual.position.y+=1;domainVisual.scale.setScalar(.05);scene.add(domainVisual);}
+function attack(mode='strike'){const domain=mode==='domain',blast=mode==='blast';const cost=domain?35:blast?12:4;if(state.ki<cost){showToast('Not enough KI');return}state.ki-=cost;animateAttack(mode);sound(mode==='domain'?'domain':mode==='blast'?'blast':'strike');if(domain){makeDomainEffect();spawnBurst(new THREE.Vector3(player.position.x,1.2,player.position.z),0x9b45ff,'implode',38);setTimeout(()=>{if(player)spawnBurst(new THREE.Vector3(player.position.x,1.2,player.position.z),0x9b45ff,'explode',52)},420)}let target=null,dist=999;for(let e of enemies){let d=player.position.distanceTo(e.position);if(d<dist&&d<(domain?28:blast?22:5.5)){target=e;dist=d}}if(target){target.userData.hp-=domain?95:blast?42:30;target.userData.hit=.32;target.userData.knockback=domain?4:blast?2.2:1.1;let p=target.position.clone();spawnBurst(new THREE.Vector3(p.x,1.6,p.z),domain?0xb8a4ff:blast?0xffd66b:0x79f6ff,'hit',domain?36:18);if(target.userData.hp<=0){scene.remove(target);enemies=enemies.filter(e=>e!==target);state.kills++;state.xp+=45;state.power+=80;state.ki=Math.min(100,state.ki+18);showToast((target.userData.boss?'ELITE EXORCISED':'CURSED STRAY DEFEATED')+' · +45 XP');if(enemies.length<4)spawnEnemy((Math.random()-.5)*45,(Math.random()-.5)*45,Math.random()<.12);state.questKills++;if(state.quest===2&&state.questKills>=3)completeQuest();else if([14,16].includes(state.quest)&&state.questKills>=3)completeQuest();else if(state.quest===17&&domain)completeQuest();else if(![0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17].includes(state.quest))completeQuest();save()}else showToast(domain?'DOMAIN SURGE!':blast?'KI BLAST!':'MELEE COMBO!')}else {if(!domain)spawnBurst(new THREE.Vector3(player.position.x+Math.sin(player.rotation.y)*2,1.6,player.position.z+Math.cos(player.rotation.y)*2),blast?0xffd66b:0x79f6ff,blast?'explode':'hit',blast?26:10);showToast(domain?'DOMAIN EXPANSION: ECLIPSE SANCTUM':blast?'KI BLAST RELEASED':'MELEE COMBO!')}updateUI()}function interact(){let b=beacons.find(b=>player.position.distanceTo(b.position)<5);if(b){dialog('The crash recorder','The airplane and your friends’ van were caught in the same dimensional impact. The recorder contains a Capsule Corp signature dated before the crash. Someone may have arranged your arrival.');completeQuest();return}if(player.position.distanceTo(new THREE.Vector3(12,0,-15))<12){dialog('Capsule Corp bio-inventions','A shaken researcher explains that you and your friends woke in purpose-built bio-bodies, engineered with unusual Saiyan-like cells and an unknown energy source. Capsule Corp claims it rescued you—but the files suggest your bodies were designed before the airplane ever took off.');completeQuest();return}showToast('Find the wreckage or the Capsule Corp recovery beacon.')}function renderMissions(){let box=$('missionList');box.innerHTML='';missions.forEach((m,i)=>{let d=document.createElement('div');d.className='tile';d.innerHTML='<b>'+(i+1)+'. '+m[0]+'</b><small>'+m[1]+'</small><button>TRACK</button>';d.querySelector('button').onclick=()=>{state.quest=i;$('missions').style.display='none';updateUI();showToast('Tracking: '+m[0]);save()};box.appendChild(d)})}
+function jumpFly(){state.fly=!state.fly;showToast(state.fly?'FLIGHT ENABLED':'FLIGHT DISABLED');$('fly').innerHTML=state.fly?'↓<br>LAND':'↑<br>FLY'}$('hit').onclick=()=>attack('strike');$('blast').onclick=()=>attack('blast');$('domain').onclick=()=>attack('domain');$('fly').onclick=jumpFly;$('talk').onclick=interact;$('menuBtn').onclick=()=>$('menu').style.display='grid';$('missionBtn').onclick=()=>$('missions').style.display='grid';$('closeMenu').onclick=$('resume').onclick=()=>$('menu').style.display='none';$('closeMissions').onclick=()=>$('missions').style.display='none';$('dialogOk').onclick=()=>$('dialog').style.display='none';$('train').onclick=()=>{state.xp+=80;state.ki=100;state.power+=120;showToast('TRAINING COMPLETE · +120 POWER');if(state.xp>=state.level*100){state.xp=0;state.level++}save();updateUI()};$('travel').onclick=()=>{state.zone=(state.zone+1)%zones.length;buildZone();save();updateUI()};$('zenkaiBtn').onclick=()=>{if(state.level<100){dialog('Zenkai locked','Reach level 100 before a Zenkai reset. Each Zenkai permanently boosts power, then returns you to level 1.');return}state.zenkai++;state.level=1;state.xp=0;state.power=Math.floor(state.power*1.5);dialog('ZENKAI AWAKENING','Zenkai '+state.zenkai+' complete. Power permanently increased. The path to 1,000 Zenkais is yours to walk.');save();updateUI()};renderMissions();buildZone();updateUI();let introSeen=false;try{introSeen=localStorage.getItem('csr-isekai-intro-v1')==='seen'}catch(e){}if(!introSeen){setTimeout(()=>dialog('PROLOGUE · THE WRONG FLIGHT','You and your friends are on a road trip in a van, joking about the weird isekai anime you watched. Then an airplane appears where no plane should be—and crashes straight into the van in a burst of impossible violet light.\n\nYou wake in a Capsule Corp laboratory, alive but changed. Each of you has a new body: a bio-engineered invention built with powerful Saiyan-like biology. The researchers insist they saved you. The sealed files say they were expecting you.\n\nFIRST OBJECTIVE: inspect the crash site, find your friends, and discover who made you.'),500);try{localStorage.setItem('csr-isekai-intro-v1','seen')}catch(e){}}
+// Keyboard, camera orbit, touch stick
+addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;if(e.repeat)return;if([' ','arrowup','arrowdown','arrowleft','arrowright'].includes(e.key.toLowerCase()))e.preventDefault();if(e.key.toLowerCase()==='j')attack('strike');if(e.key.toLowerCase()==='k')attack('blast');if(e.key.toLowerCase()==='l')attack('domain');if(e.key.toLowerCase()==='e')interact();if(e.key.toLowerCase()==='m')$('menu').style.display='grid';if(e.code==='Space')state.fly=!state.fly});addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);addEventListener('blur',()=>{keys={};dragging=false;});document.addEventListener('contextmenu',e=>e.preventDefault());let dragging=false,px=0,py=0;renderer.domElement.addEventListener('pointerdown',e=>{dragging=true;px=e.clientX;py=e.clientY;renderer.domElement.setPointerCapture(e.pointerId)});renderer.domElement.addEventListener('pointerup',()=>dragging=false);renderer.domElement.addEventListener('pointermove',e=>{if(dragging&&e.target===renderer.domElement){yaw-=(e.clientX-px)*.005;pitch=Math.max(-.35,Math.min(.75,pitch+(e.clientY-py)*.003));px=e.clientX;py=e.clientY}});let stick=$('left'),stickOn=false;stick.addEventListener('pointerdown',e=>{stickOn=true;stick.setPointerCapture(e.pointerId);moveStick(e)});stick.addEventListener('pointermove',e=>{if(stickOn)moveStick(e)});stick.addEventListener('pointerup',()=>{stickOn=false;move.x=move.z=0;$('stick').style.transform='translate(0,0)'});function moveStick(e){let r=stick.getBoundingClientRect(),x=e.clientX-(r.left+r.width/2),y=e.clientY-(r.top+r.height/2),len=Math.hypot(x,y),max=38;if(len>max){x=x/len*max;y=y/len*max}move.x=x/max;move.z=y/max;$('stick').style.transform=`translate(${x}px,${y}px)`}addEventListener('resize',()=>{if(!window.__csrCustomResolution){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)}});
+let __csrFrameTime=0;function loop(t){requestAnimationFrame(loop);if(t-__csrFrameTime<1000/(window.__csrFpsCap||40))return;__csrFrameTime=t;let dt=Math.min(clock.getDelta(),.05);if(toastTimer>0&&(toastTimer-=dt)<=0)$('toast').style.display='none';let f=(keys.w||keys.arrowup?1:0)-(keys.s||keys.arrowdown?1:0)-move.z,r=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0)+move.x;let len=Math.hypot(f,r)||1;f/=len;r/=len;let speed=(keys.shift?23:state.fly?30:10)*dt;let dx=(Math.sin(yaw)*f+Math.cos(yaw)*r)*speed,dz=(Math.cos(yaw)*f-Math.sin(yaw)*r)*speed;player.position.x=THREE.MathUtils.clamp(player.position.x+dx,-320,320);player.position.z=THREE.MathUtils.clamp(player.position.z+dz,-320,320);if(state.fly){player.position.y=Math.min(28,player.position.y+((keys[' ']||keys.arrowup)?dt*8:0));player.position.y=Math.max(3,player.position.y-((keys.c)?dt*8:0))}else player.position.y+=(0-player.position.y)*Math.min(1,dt*8);if(Math.abs(f)+Math.abs(r)>.05)player.rotation.y=Math.atan2(dx,dz);playerAura.rotation.y+=dt*.8;playerAura.scale.setScalar(1+Math.sin(performance.now()*.003)*.06);
+if(combatAnim.time<combatAnim.duration){combatAnim.time+=dt;const q=Math.min(1,combatAnim.time/combatAnim.duration),wave=Math.sin(q*Math.PI);player.rotation.x=(combatAnim.type==='domain'?-.08*wave:combatAnim.type==='blast'?.12*wave:.18*wave);if(player.userData.animParts){const arms=player.userData.animParts.arms||[];arms.forEach((a,i)=>{const side=i%2===0?-1:1;const swing=combatAnim.type==='domain'?-.55*wave:combatAnim.type==='blast'?.95*wave:(i<2?1.2:-.45)*wave;a.rotation.x=swing;a.rotation.z=side*(combatAnim.type==='domain'?.75:.18)+side*.2*wave});(player.userData.animParts.legs||[]).forEach((a,i)=>a.rotation.x=(i===0?1:-1)*.18*wave)} }else{player.rotation.x*=Math.max(0,1-dt*8);if(player.userData.animParts){player.userData.animParts.arms.forEach(a=>{a.rotation.x*=Math.max(0,1-dt*8);a.rotation.z*=Math.max(0,1-dt*8)});player.userData.animParts.legs.forEach(a=>a.rotation.x*=Math.max(0,1-dt*8))}if(playerAura.material.color.getHex()!==0x73eaff){playerAura.material.color.set(0x73eaff);playerAura.material.opacity=.1}}
+if(domainVisual){const age=combatAnim.time/Math.max(.01,combatAnim.duration);domainVisual.position.copy(player.position);domainVisual.position.y+=1;const scale=age<.5?Math.max(.05,age*2)*5.5:Math.max(.2,1.1-(age-.5)*1.8)*5.5;domainVisual.scale.setScalar(scale);domainVisual.rotation.y+=dt*.65;if(combatAnim.time>=combatAnim.duration){scene.remove(domainVisual);domainVisual=null}}
+state.ki=Math.min(100,state.ki+dt*3);for(let e of enemies){let d=e.position.distanceTo(player.position);if(d<24&&d>2){e.position.x+=(player.position.x-e.position.x)*dt*.12;e.position.z+=(player.position.z-e.position.z)*dt*.12;e.lookAt(player.position.x,0,player.position.z)}if(d<2.3)state.hp=Math.max(0,state.hp-dt*7);if(state.hp<=0){state.hp=100;state.ki=100;player.position.set(0,0,0);showToast('RECOVERED AT CAPSULE OUTPOST');}if(e.userData.knockback>0){const k=Math.min(e.userData.knockback,dt*9);e.position.x+=Math.sin(e.rotation.y)*k;e.position.z+=Math.cos(e.rotation.y)*k;e.userData.knockback-=k}if(e.userData.hit>0){e.userData.hit-=dt;e.scale.setScalar(1.15)}else e.scale.setScalar(1)}for(let p of particles){p.t-=dt;if(p.v){const dir=p.kind==='implode'?-1:1;p.o.position.addScaledVector(p.v,dt*dir);p.v.multiplyScalar(Math.max(.88,1-dt*1.5))}else p.o.position.y+=dt*2;if(p.kind==='implode')p.o.scale.multiplyScalar(Math.max(.2,1-dt*2));else if(p.kind==='explode'||p.kind==='hit')p.o.scale.multiplyScalar(1+dt*2);p.o.material.transparent=true;p.o.material.opacity=Math.max(0,Math.min(1,p.t*2));if(p.t<=0){scene.remove(p.o);if(p.o.geometry)p.o.geometry.dispose();if(p.o.material)p.o.material.dispose();p.dead=true}}particles=particles.filter(p=>!p.dead);let target=new THREE.Vector3(player.position.x+Math.sin(yaw)*-9,player.position.y+5+pitch*5,player.position.z+Math.cos(yaw)*-9);camera.position.lerp(target,Math.min(1,dt*4));camera.lookAt(player.position.x,player.position.y+1.5,player.position.z);if(Math.floor(performance.now()/1000)!==last){last=Math.floor(performance.now()/1000);updateUI()}renderer.render(scene,camera)}loop();if('serviceWorker' in navigator && location.protocol!=='file:'){navigator.serviceWorker.register('./sw.js').catch(()=>{});}
+})();</script><style>
+#realmHub{position:fixed;inset:0;z-index:60;display:none;place-items:center;background:#06101bdd;backdrop-filter:blur(8px);padding:10px;pointer-events:auto}#realmHub .sheet{width:min(950px,97vw);max-height:94vh;overflow:auto;padding:17px;border:1px solid #aaf7ff77;border-radius:18px;background:linear-gradient(145deg,#153452f5,#10182ef7)}#rhTabs{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}#rhGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px}.rhCard{padding:11px;border:1px solid #ffffff30;border-radius:12px;background:#ffffff0b}.rhCard small{display:block;color:#bed2e5;line-height:1.4;margin:6px 0}.rhCard button{padding:7px;font-size:11px}#rhStatus{color:#ffe88d;font-weight:bold;margin:9px 0}#rhOpen{position:fixed;left:12px;top:50%;z-index:12;pointer-events:auto;padding:8px;font-size:10px}#rhFlash{position:fixed;inset:0;z-index:55;display:none;place-items:center;pointer-events:none;background:radial-gradient(circle,#fff9,#65eaff55 30%,transparent 70%);animation:rhFlash .9s ease-out}#rhFlash b{font-size:clamp(24px,6vw,60px);color:white;text-shadow:0 0 18px #55f5ff,0 0 40px #b19cff;text-align:center}@keyframes rhFlash{0%{opacity:0;transform:scale(.7)}20%{opacity:1;transform:scale(1.03)}100%{opacity:0;transform:scale(1.3)}}@media(max-width:600px){#rhOpen{top:auto;bottom:145px}}
+</style>
+<button id="rhOpen">✦ REALM HUB</button><div id="rhFlash"><b id="rhFlashText">ASCENSION</b></div><div id="realmHub"><div class="sheet"><h1>✦ ECLIPSE REALM DATABASE</h1><p>Boss hunts · rival dossiers · shops · workers · wildlife · hotels · transformations · original music.</p><div id="rhStatus"></div><div id="rhTabs"></div><div id="rhGrid"></div><p><button id="rhClose">RETURN TO WORLD</button></p></div></div>
+<script>(()=>{'use strict';const $=id=>document.getElementById(id);
+const bosses=['Ashen Oozaru','Mirefang Alpha','Glass Warden','Captain Null','Dreadhorn of the Rift','Vanta, Star Eater','Red Comet','Gravemind Colossus','Nine-Shadow Kitsune','Hollow Name','Iron Lotus Matriarch','Thunderjaw Rex','Pale Astronomer','Ruin-Breaker Korr','Senzu Phantom','Eclipse Seraph','Magma Crown','Blue Howler','Clockwork Oni','Thousand-Eyed','Abyssal Leviathan','Prince of Broken Moons','Black Orchard','Mirror Saiyan','Wailing Engine','Obsidian Basilisk','Storm Empress Raika','Forgotten Kaiju','Sukuna’s Red Hand','Goku Jr.’s Trial Echo','Eclipse Twin','Planetbreaker','Last Zenkai','Crown Beyond Time'];
+const bossLore=['Moon-maddened ape guarding a ruined launch site.','Venomous wolf-beast that tracks ki.','Mirror-armoured sentinel that punishes reckless strikes.','Rogue patrol commander with gravity mines.','Horned curse that bends the arena.','Cosmic predator that feeds on energy cores.','Living meteor with blistering dash attacks.','Ancient machine with an armoured core.','Trickster spirit with decoy bodies.','Nameless curse that silences the battlefield.','Mechanical flower firing razor petals.','Thunder lizard that charges through stone.','Fallen scholar wielding star charts.','Warlord with ground-breaking gauntlets.','Thief that copies your last technique.','Radiant guardian twisted by the eclipse.','Molten giant leaving hot ground behind.','Cold curse that slows ki recovery.','Clockwork demon that accelerates mid-fight.','Watcher that learns repeated attack patterns.','Sea titan drawn to powerful ki.','Saiyan phantom demanding a worthy duel.','Walking grove commanding corrupted wildlife.','Rival adapting to your strongest move.','Reactor spirit surrounded by unstable drones.','Gaze-curse that turns terrain to black glass.','Lightning master who punishes predictable movement.','Colossal legend fought in a special arena.','Champion carrying the king’s mark.','Heroic projection testing restraint.','Linked twins sharing a health pool.','World-ending entity destabilising the horizon.','Ascension test that grows stronger after each recovery.','Hidden endgame ruler behind the century eclipse.'];
+const villains=[['Sukuna, King of Curses','Cruel, theatrical and patient; treats the world as a toy.'],['Goku Jr., Saiyan Heir','Proud, disciplined and convinced strength must rule.'],['Vegeta Jr.','Bossy, brilliant and secretly protective of his staff.'],['Dr. Veyra Kline','Rogue scientist fusing curse cores and Saiyan cells.'],['Lord Null','Quiet void monarch determined to erase all power.'],['Mara the Red','Charismatic rebel who wants both thrones to fall.'],['Kurogane','Blunt cursed weaponsmith who always asks a price.'],['Pale Astronomer','Eclipse cult leader obsessed with cosmic order.'],['Raze Vorn','Honour-bound Saiyan bounty hunter.'],['Mother Mire','Beast caller who despises Capsule Corp experiments.'],['The Archivist','Polite memory thief fascinated by lost Earth.'],['Crown Beyond Time','Patient mastermind manipulating both kingdoms.']];
+const workers=[['Mika Sol','Receptionist','Warm, witty, knows the local rumours.'],['Dr. Olly Venn','Engineer','Excitable inventor names every machine.'],['Penny Quill','Quartermaster','Practical, sharp-eyed, never forgets a debt.'],['Amir Vale','Courier','Fast-talking explorer who knows hidden routes.'],['Sophia Ren','Barrier engineer','Calm, methodical defensive-tech expert.'],['Carter Knox','Combat coach','Competitive but fair; effort beats bragging.'],['Jasmine Reed','Field medic','Patient, reassuring and well-prepared.'],['Jaymi Forge','Armour artisan','Blunt, funny and proud of every upgrade.'],['Brooklyn Page','Archivist','Curious lore expert who loves obscure history.'],['Tye Mercer','Grid technician','Dry humour and excellent diagnostics.'],['Stella North','Observatory guide','Dreamy stargazer with a sharp eye.'],['Matthew Byte','Drone operator','Nervous genius with helpful machines.']];
+const animals=[['Cloudtail Fox','Curious; follows energy orbs.'],['Pebbleback Turtle','Gentle; loves warm rocks.'],['Riftwing Hawk','Territorial flyer circling high cliffs.'],['Mosshorn Grazer','Shy herbivore with mossy horns.'],['Emberfin Carp','Glows orange in hot springs.'],['Moon-Mane Lynx','Quiet nocturnal hunter with silver markings.'],['Crystal Beetle','Collects shiny fragments in its shell.'],['Little Oozaru','Young giant ape that imitates poses.'],['Prism Moth','Leaves sparkling dust trails.'],['Stormback Boar','Charges when startled; give it space.'],['Blue Koi','Peaceful fish said to bring luck.'],['Void Crawler','Harmless scavenger hiding from bright light.']];
+const shops=[['Penny’s Supply Counter','Consumables and field rations',150],['Jaymi’s Forge','Gauntlets, aura charms, reinforced boots',350],['Kurogane’s Black Market','Rare curse relics and cores',500],['Capsule Research Store','Scanners, drone lures, gravity modules',280],['Mika’s Travel Desk','Maps and expedition packs',90]];
+const hotels=[['Capsule Coast Inn','Safe rest by the sea',80],['Verdant Wayfarer Lodge','Quiet cabins beside the river',120],['Riftwatch Hotel','Secure rooms near the endgame zone',260],['Eclipse Spire Suites','Luxury rooms overlooking the strange sky',900]];
+const forms=[['Kaioken Pulse',5,'Red aura surge; temporary speed boost.'],['Super Saiyan',15,'Golden aura and upward energy flare.'],['Super Saiyan 2',30,'Golden aura with blue-white sparks.'],['Cursed Blue',45,'Blue-violet flame aura and refined ki.'],['Primal Eclipse',60,'Crimson-black aura and shockwave.'],['Ultra Instinct Sign',75,'Silver-blue shimmer and evasive focus.'],['Mastered Ultra Instinct',100,'Silver aura, calm stance and cinematic burst.']];
+const tracks=[['Frontier Sunrise',174],[ 'Capsule Coast Circuit',196],['Cursed Rainfall',112],['Saiyan Training Pulse',148],['Eclipse Overdrive',208],['Quiet at the Inn',82]];
+let zeni=Number(localStorage.getItem('csr-zeni')||1200),wins=JSON.parse(localStorage.getItem('csr-boss-wins')||'[]'),unlocked=JSON.parse(localStorage.getItem('csr-forms')||'[]'),active='bosses',audio=null,timer=null,track=0,step=0;
+const tabs=[['bosses','34 Bosses'],['villains','12 Villains'],['shops','Shops'],['workers','Workers'],['animals','Wildlife'],['hotels','Hotels'],['forms','Transformations'],['music','Music Playlist']];
+function save(){try{localStorage.setItem('csr-zeni',String(zeni));localStorage.setItem('csr-boss-wins',JSON.stringify(wins));localStorage.setItem('csr-forms',JSON.stringify(unlocked))}catch(e){}}
+function status(t){$('rhStatus').textContent='ZENI '+zeni.toLocaleString()+' · BOSS RECORD '+wins.length+'/34 · '+t}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function render(){ $('rhTabs').innerHTML=tabs.map(([id,l])=>`<button data-t="${id}">${l}</button>`).join('');$('rhTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{active=b.dataset.t;render()});let data=[];
+if(active==='bosses')data=bosses.map((n,i)=>[n,'BOSS · '+['Frontier','Coast','Crystal Reach','King’s Rift','Badlands'][i%5],bossLore[i],`<button data-a="boss" data-i="${i}">${wins.includes(i)?'FIGHT AGAIN':'CHALLENGE'}</button>`]);
+if(active==='villains')data=villains.map((v,i)=>[v[0],'VILLAIN DOSSIER',v[1],'']);if(active==='workers')data=workers.map(v=>[v[0],v[1],v[2],'']);if(active==='animals')data=animals.map(v=>[v[0],'WILDLIFE',v[1],'']);
+if(active==='shops')data=shops.map((v,i)=>[v[0],'SHOP · '+v[2]+' Zeni',v[1],`<button data-a="buy" data-i="${i}">BUY FIELD KIT</button>`]);if(active==='hotels')data=hotels.map((v,i)=>[v[0],'HOTEL · '+v[2]+' Zeni',v[1],`<button data-a="hotel" data-i="${i}">CHECK IN</button>`]);
+if(active==='forms')data=forms.map((v,i)=>[v[0],'TRANSFORMATION · LEVEL '+v[1],v[2],`<button data-a="form" data-i="${i}">${unlocked.includes(i)?'TRANSFORM':'UNLOCK / TRANSFORM'}</button>`]);if(active==='music')data=tracks.map((v,i)=>[v[0],'ORIGINAL PROCEDURAL THEME','Generated in browser; no commercial recording.',`<button data-a="music" data-i="${i}">PLAY THEME</button>`]);
+$('rhGrid').innerHTML=data.map((v,i)=>`<div class="rhCard"><b>${String(i+1).padStart(2,'0')} · ${esc(v[0])}</b><small>${esc(v[1])}<br>${esc(v[2])}</small>${v[3]}</div>`).join('');$('rhGrid').querySelectorAll('button[data-a]').forEach(b=>b.onclick=()=>act(b.dataset.a,+b.dataset.i));status('Select a record');}
+function flash(s){$('rhFlashText').textContent=s.toUpperCase();$('rhFlash').style.display='grid';setTimeout(()=>$('rhFlash').style.display='none',950)}
+function act(a,i){if(a==='boss'){let reward=100+i*35,level=+(document.getElementById('level')?.textContent||1);if(level*12+150<(160+i*65)&&!confirm(bosses[i]+' is a difficult challenge. Attempt the boss record anyway?'))return;if(!wins.includes(i))wins.push(i);zeni+=reward;save();try{let p=JSON.parse(localStorage.getItem('csr-save')||'{}');p.xp=(+p.xp||0)+90;p.power=(+p.power||1250)+reward*2;localStorage.setItem('csr-save',JSON.stringify(p))}catch(e){}flash(bosses[i]+' defeated');status('VICTORY · +'+reward+' Zeni');}
+if(a==='buy'){let v=shops[i];if(zeni>=v[2]){zeni-=v[2];save();status('Purchased field kit from '+v[0])}else status('Not enough Zeni')}
+if(a==='hotel'){let v=hotels[i];if(zeni>=v[2]){zeni-=v[2];save();let hp=$('hp'),ki=$('ki');if(hp)hp.style.width='100%';if(ki)ki.style.width='100%';status('Checked into '+v[0]+' · rested')}else status('Not enough Zeni')}
+if(a==='form'){let v=forms[i],level=+($('level')?.textContent||1);if(level<v[1]&&!unlocked.includes(i)){status('Requires level '+v[1]);return}if(!unlocked.includes(i))unlocked.push(i);save();flash(v[0]);status('Transformation activated: '+v[0])}if(a==='music')play(i);render()}
+function play(i){try{if(!audio)audio=new(window.AudioContext||window.webkitAudioContext)();audio.resume();track=i;step=0;if(timer)clearInterval(timer);timer=setInterval(()=>{if(!audio||audio.state!=='running')return;let scale=[130.81,164.81,196,220,261.63,196,164.81,146.83],o=audio.createOscillator(),g=audio.createGain();o.type=i===2?'triangle':'sine';o.frequency.value=scale[(step+i*2)%8]*(step%4===0?2:1);g.gain.setValueAtTime(.0001,audio.currentTime);g.gain.exponentialRampToValueAtTime(.018,audio.currentTime+.03);g.gain.exponentialRampToValueAtTime(.0001,audio.currentTime+.3);o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+.31);step++},60000/tracks[i][1]);status('Playing '+tracks[i][0])}catch(e){status('Audio unavailable in this browser')}}
+$('rhOpen').onclick=()=>{$('realmHub').style.display='grid';render()};$('rhClose').onclick=()=>{$('realmHub').style.display='none'};document.addEventListener('keydown',e=>{if(e.key==='Escape')$('realmHub').style.display='none';if(e.key.toLowerCase()==='u'){$('realmHub').style.display='grid';render()}});render();
+})();</script>
+
+<style>
+#aaaPanel{position:fixed;z-index:90;inset:0;display:none;place-items:center;background:#030817e8;backdrop-filter:blur(12px);padding:10px;font-family:system-ui;color:#f1fbff}
+#aaaPanel .aaaWindow{width:min(1080px,98vw);max-height:94vh;overflow:auto;border:1px solid #77eaff77;border-radius:20px;background:linear-gradient(145deg,#102b47,#16142d 65%,#301b42);padding:16px;box-shadow:0 0 45px #42dfff33}
+#aaaPanel h1{font-size:clamp(21px,4vw,36px);margin:2px 0 8px;text-shadow:0 0 18px #5cecff}
+#aaaPanel p{color:#c6d8ec}
+#aaaTabs{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+#aaaPanel button{cursor:pointer;border:1px solid #8deeff55;border-radius:9px;background:#143d5d;color:#f2fcff;padding:8px 10px;font-weight:700}
+#aaaPanel button:hover{background:#236d8b}
+#aaaGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:9px}
+.aaaCard{padding:11px;border-radius:13px;background:#ffffff0a;border:1px solid #ffffff24}
+.aaaCard b{color:#baf8ff}.aaaCard small{display:block;line-height:1.45;color:#c6d8ec;margin:6px 0 9px}
+#aaaStatus{font-weight:800;color:#ffe99b;margin:10px 0}
+#aaaOverlay{display:none;position:fixed;z-index:80;inset:0;pointer-events:none;place-items:center;background:radial-gradient(circle,#fff9 0,#70edff66 18%,#784fff33 43%,transparent 72%);animation:aaaFlash 1.25s ease-out}
+#aaaOverlay strong{font-size:clamp(24px,6vw,68px);color:white;text-align:center;text-shadow:0 0 15px #53efff,0 0 38px #a66cff;letter-spacing:3px}
+@keyframes aaaFlash{0%{opacity:0;transform:scale(.5) rotate(-5deg)}20%{opacity:1;transform:scale(1.05)}100%{opacity:0;transform:scale(1.4) rotate(5deg)}}
+#aaaLauncher{position:fixed;z-index:25;right:12px;top:12px;display:flex;flex-wrap:wrap;gap:6px;pointer-events:auto}
+#aaaLauncher button{background:#102a4ce8;color:white;border:1px solid #7cf4ff88;border-radius:10px;padding:9px 11px;font-weight:900}
+#aaaMini{position:fixed;z-index:26;left:12px;bottom:12px;color:#e9fbff;background:#07152cbd;border:1px solid #8ceaff55;border-radius:12px;padding:8px 10px;font-size:12px;pointer-events:none}
+@media(max-width:600px){#aaaPanel .aaaWindow{padding:10px}#aaaLauncher{top:auto;right:8px;bottom:8px;max-width:58vw}#aaaLauncher button{font-size:10px;padding:7px}}
+</style>
+<div id="aaaLauncher"><button id="aaaOpen">✦ ASCENSION CODEX</button><button id="aaaGym">⚡ TRAIN</button><button id="aaaFuse">✧ FUSE</button></div>
+<div id="aaaMini">ZENI <span id="aaaZeni">1200</span> · DRAGON BALLS <span id="aaaBalls">0/7</span></div>
+<div id="aaaPanel" role="dialog" aria-modal="true" aria-label="Ascension Codex">
+ <div class="aaaWindow">
+  <h1>✦ CURSED SAIYAN: ASCENSION CODEX</h1>
+  <p>Forms · combat techniques · domains · gods · fusions · dragon balls · training · character creator</p>
+  <div id="aaaStatus">Ready</div><div id="aaaTabs"></div><div id="aaaGrid"></div>
+  <p><button id="aaaClose">RETURN TO REALM</button></p>
+ </div>
+</div>
+<div id="aaaOverlay"><strong id="aaaOverlayText">ASCENSION</strong></div>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id);
+const names=(prefix,items)=>items.map((x,i)=>({name:x[0],detail:x[1],id:i}));
+const forms=names('form',[
+['Kaioken Pulse','Crimson aura · burst speed'],['Super Saiyan','Gold aura · power surge'],['Super Saiyan 2','Gold lightning · sharper strikes'],['Super Saiyan 3','Long golden hair · huge ki drain'],['Super Saiyan God','Red divine aura · precise ki'],['Super Saiyan Blue','Blue aura · controlled output'],['Blue Evolution','Dense blue aura · heavy hits'],['Primal Eclipse','Crimson-black aura · cursed force'],['Cursed Blue','Blue-violet flame · hybrid energy'],['Black Star','Dark aura · volatile power'],['Beast Awakened','Silver-violet flare · counter focus'],['Ultra Instinct Sign','Silver-blue shimmer · evasive focus'],['Mastered Ultra Instinct','Silver aura · calm movement'],['Perfected Instinct','White-silver flare · refined movement'],['Legendary Saiyan','Emerald aura · rising strength'],['Berserk Legendary','Green-black shockwave · unstable power'],['Golden Oozaru','Giant golden silhouette · primal force'],['Super Saiyan 4','Crimson fur style · primal control'],['Super Saiyan 4 Limit Breaker','Black-red aura · amplified primal force'],['Mystic Unleashed','White-gold flare · awakened potential'],['Potential Unbound','Bright white aura · balanced boost'],['Demon Vessel','Purple cursed markings · curse boost'],['King’s Mark','Black-red sigils · execution stance'],['Void Saiyan','Ink aura · space distortion'],['Celestial Saiyan','Blue-white halo · divine focus'],['Solar Ascendant','Solar flare · burning aura'],['Lunar Ascendant','Moonlit silver aura · counter power'],['Storm Saiyan','Electric aura · dash power'],['Frostbound Saiyan','Icy blue aura · precision'],['Dragon Soul','Golden dragon aura · ki reserve'],['Abyssal Crown','Dark crown aura · curse pressure'],['Eclipse Sovereign','Black-gold eclipse aura · hybrid peak'],['Transcendent Sovereign','Prismatic aura · extreme mastery'],['Limitless Apex','Multi-layer aura · final mastery']
+]);
+const melee=Array.from({length:300},(_,i)=>({name:`${['Meteor','Comet','Dragon','Phantom','Thunder','Eclipse','Nova','Iron','Crimson','Void'][i%10]} ${['Jab','Hook','Cross','Rising Fist','Heel Strike','Knee Breaker','Spinning Kick','Afterimage Combo','Aerial Launcher','Ground Quake'][Math.floor(i/10)%10]} ${String(i+1).padStart(3,'0')}`,detail:`Style ${1+Math.floor(i/30)} · ${['fast opener','guard breaker','launcher','air combo','counter finisher'][i%5]}`,id:i}));
+const domains=Array.from({length:230},(_,i)=>({name:`${['Infinite','Cursed','Celestial','Hollow','Crimson','Silent','Eclipse','Primal','Astral','Obsidian'][i%10]} ${['Throne','Garden','Cathedral','Abyss','Sanctuary','Arena','Labyrinth','Starfield','Mirror Hall','Worldscar'][Math.floor(i/10)%10]} ${String(i+1).padStart(3,'0')}`,detail:`Domain grade ${1+Math.floor(i/46)} · ${['pressure field','binding arena','counter zone','ki amplification','curse suppression'][i%5]}`,id:i}));
+const ki=Array.from({length:340},(_,i)=>({name:`${['Azure','Solar','Void','Dragon','Thunder','Starfall','Cursed','Prismatic','Meteor','Godspeed'][i%10]} ${['Wave','Lance','Burst','Cannon','Nova','Rain','Sphere','Beam','Spiral','Detonation'][Math.floor(i/10)%10]} ${String(i+1).padStart(3,'0')}`,detail:`Ki art ${1+Math.floor(i/34)} · ${['single target','wide burst','piercing shot','charged finisher','tracking volley'][i%5]}`,id:i}));
+const gods=[
+['Zerath, God of the First Flame','Creation deity; tests courage.'],['Mirae, Keeper of Tides','Calm cosmic judge of balance.'],['Orun the Star Smith','Forges worlds and divine weapons.'],['Veyra, Lady of Time','Speaks in riddles; watches branching futures.'],['Kael, God of Storms','Honours bold challengers.'],['Nym, Dream Shepherd','Turns memories into trials.'],['Solune, Twin of Night','Guards the moon roads.'],['Astrael, Celestial Judge','Values restraint above raw strength.'],['Rokhan, God of Gravity','Silent, unmovable and fair.'],['Eshara, Keeper of Life','Protects wildlife and renewal.'],['Draum, God of Ruin','Believes every ending makes room.'],['Ilyon, God of Echoes','Remembers every battle ever fought.'],['Tessara, Weaver of Fate','Can see possible futures, not certainties.'],['Volkris, God of Lightning','Impatient, direct and proud.'],['Maelis, Goddess of Healing','Gentle until the innocent are threatened.'],['Kharon, Gatekeeper of Worlds','Never lets a debt go unpaid.'],['Orryx, God of Beasts','Speaks through ancient animals.'],['Shinra, God of Ki','A stern master of energy control.'],['Noctyra, Eclipse Goddess','Knows the truth of the hundred-year eclipse.'],['Aion, God Beyond Time','The final divine witness to the throne.']
+].map((x,i)=>({name:x[0],detail:x[1],id:i}));
+const villains=[
+['Sukuna','King of Curses · theatrical and merciless.'],['Goku Jr.','Saiyan heir · proud and disciplined.'],['Vegeta Jr.','Capsule Corp director · demanding but loyal.'],['Dr. Veyra Kline','Scientist · obsessed with hybrid power.'],['Lord Null','Void monarch · wants power erased.'],['Mara the Red','Rebel commander · charismatic strategist.'],['Kurogane','Weaponsmith · blunt, shrewd trader.'],['Pale Astronomer','Eclipse cultist · speaks in prophecies.'],['Raze Vorn','Bounty hunter · honour-bound.'],['Mother Mire','Beast caller · fiercely protective.'],['The Archivist','Memory thief · polite and unsettling.'],['Crown Beyond Time','Hidden mastermind · patient manipulator.']
+].map((x,i)=>({name:x[0],detail:x[1],id:i}));
+const crew=[
+['Aden','Hybrid Saiyan-cursed lead; adaptable and stubborn.'],['Phoebe','Barrier specialist; compassionate and sharp.'],['Olly','Inventor; excitable and accident-prone.'],['Sophia','Defensive tactician; calm and analytical.'],['Carter','Combat coach; competitive but fair.'],['Penny','Quartermaster; practical and debt-conscious.'],['Amir','Courier; energetic and streetwise.'],['Jasmine','Field medic; patient and reassuring.'],['Jaymi','Armour artisan; blunt and proud.'],['Brooklyn','Archivist; curious lore hunter.'],['Stella','Stargazer; dreamy but observant.'],['Tye','Power engineer; dry humour.'],['Matthew','Drone operator; shy genius.'],['Mika','Receptionist; friendly rumour source.']
+].map((x,i)=>({name:x[0],detail:x[1],id:i}));
+const animals=[
+['Cloudtail Fox','Curious, follows bright ki orbs.'],['Pebbleback Turtle','Gentle, naps on warm stones.'],['Riftwing Hawk','Territorial flyer of the cliffs.'],['Mosshorn Grazer','Shy herbivore with mossy horns.'],['Emberfin Carp','Glows orange in hot springs.'],['Moon-Mane Lynx','Quiet nocturnal hunter.'],['Crystal Beetle','Stores glittering fragments on its shell.'],['Little Oozaru','Young giant ape that imitates poses.'],['Prism Moth','Leaves sparkling dust.'],['Stormback Boar','Charges if startled; give it space.'],['Blue Koi','Peaceful fish said to bring luck.'],['Void Crawler','Harmless scavenger that avoids bright light.']
+].map((x,i)=>({name:x[0],detail:x[1],id:i}));
+const dragonballs=Array.from({length:7},(_,i)=>({name:`${i+1}-Star Dragon Ball`,detail:`Relic ${i+1}/7 · discover a hidden landmark to collect it.`,id:i}));
+const tabs=[['forms','34 Forms'],['melee','300 Melee'],['domains','230 Domains'],['ki','340 Ki Attacks'],['gods','20 Gods'],['fusion','Fusions'],['balls','Dragon Balls'],['gym','Gym & Training'],['crew','Characters'],['villains','Villains'],['animals','Animals']];
+let tab='forms',state={zeni:1200,balls:[],unlockedForms:[],training:0,fusions:[],style:0};
+try{const s=JSON.parse(localStorage.getItem('csr-aaa-save')||'{}');state={...state,...s}}catch(e){}
+const save=()=>{try{localStorage.setItem('csr-aaa-save',JSON.stringify(state))}catch(e){};$('aaaZeni').textContent=state.zeni.toLocaleString();$('aaaBalls').textContent=state.balls.length+'/7'};
+const status=s=>$('aaaStatus').textContent=s;
+function flash(s){$('aaaOverlayText').textContent=s;$('aaaOverlay').style.display='grid';setTimeout(()=>$('aaaOverlay').style.display='none',1250)}
+function render(){
+ $('aaaTabs').innerHTML=tabs.map(([id,label])=>`<button data-tab="${id}" style="${id===tab?'background:#237d96':''}">${label}</button>`).join('');
+ $('aaaTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{tab=b.dataset.tab;render()});
+ let items=[];
+ if(tab==='forms')items=forms.map(x=>({...x,action:'form'}));
+ if(tab==='melee')items=melee.map(x=>({...x,action:'melee'}));
+ if(tab==='domains')items=domains.map(x=>({...x,action:'domain'}));
+ if(tab==='ki')items=ki.map(x=>({...x,action:'ki'}));
+ if(tab==='gods')items=gods.map(x=>({...x,action:'god'}));
+ if(tab==='villains')items=villains.map(x=>({...x,action:'villain'}));
+ if(tab==='crew')items=crew.map(x=>({...x,action:'crew'}));
+ if(tab==='animals')items=animals.map(x=>({...x,action:'animal'}));
+ if(tab==='balls')items=dragonballs.map(x=>({...x,action:'ball'}));
+ if(tab==='fusion')items=[
+  {name:'Potara Fusion',detail:'Choose a partner, equip Potara earrings and synchronize ki.',action:'potara'},
+  {name:'Fusion Dance',detail:'Match the dance stance and timing to create a temporary fusion.',action:'dance'},
+  {name:'Fusion Lab',detail:'Spend 500 Zeni to train fusion stability.',action:'lab'}
+ ];
+ if(tab==='gym')items=[
+  {name:'Gravity Chamber',detail:'Train under increased gravity to earn strength XP.',action:'gravity'},
+  {name:'Ki Control Room',detail:'Charge steadily to improve energy discipline.',action:'charge'},
+  {name:'Sparring Ring',detail:'Practice a combo and earn training marks.',action:'spar'},
+  {name:'Character Studio',detail:'Change your character’s style, hair silhouette and build preset.',action:'style'},
+  {name:'Power-Limit Trial',detail:'Challenge a training hologram; reward scales with training.',action:'trial'}
+ ];
+ const grid=$('aaaGrid');grid.innerHTML='';
+ items.forEach((x,i)=>{const c=document.createElement('div');c.className='aaaCard';c.innerHTML=`<b>${String(i+1).padStart(3,'0')} · ${esc(x.name)}</b><small>${esc(x.detail)}</small><button data-act="${x.action}" data-i="${x.id??i}">${buttonLabel(x)}</button>`;grid.appendChild(c)});
+ grid.querySelectorAll('button').forEach(b=>b.onclick=()=>act(b.dataset.act,Number(b.dataset.i)));
+ status(`${items.length} entries · progress saved locally`);save();
+}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function buttonLabel(x){if(x.action==='form')return state.unlockedForms.includes(x.id)?'ACTIVATE FORM':'UNLOCK · 100 ZENI';if(x.action==='ball')return state.balls.includes(x.id)?'COLLECTED':'SEARCH / COLLECT';if(x.action==='melee'||x.action==='ki'||x.action==='domain')return 'EQUIP TECHNIQUE';return 'INTERACT'}
+function act(a,i){
+ if(a==='form'){if(!state.unlockedForms.includes(i)){if(state.zeni<100){status('Need 100 Zeni to unlock this form.');return}state.zeni-=100;state.unlockedForms.push(i)}flash(forms[i].name.toUpperCase());status('Form activated: '+forms[i].name+' · transformation flash played')}
+ else if(a==='melee'){state.zeni+=2;status('Equipped '+melee[i].name+' · +2 Zeni practice reward')}
+ else if(a==='ki'){state.zeni+=2;status('Equipped '+ki[i].name+' · +2 Zeni practice reward')}
+ else if(a==='domain'){if(state.zeni<25){status('Need 25 Zeni to equip a Domain technique.');return}state.zeni-=25;status('Equipped '+domains[i].name+' · domain visual flash played');flash('DOMAIN EXPANSION')}
+ else if(a==='ball'){if(state.balls.includes(i)){status('Already collected.');return}state.balls.push(i);state.zeni+=100;status('Dragon Ball found · +100 Zeni');flash('DRAGON BALL FOUND');if(state.balls.length===7){status('All seven Dragon Balls collected! The Eternal Dragon answers…');flash('MAKE YOUR WISH')}}
+ else if(a==='potara'||a==='dance'){if(state.zeni<250){status('Fusion requires 250 Zeni for preparation.');return}state.zeni-=250;state.fusions.push(a);flash(a==='potara'?'POTARA FUSION':'FUSION DANCE');status((a==='potara'?'Potara fusion':'Fusion dance')+' sequence triggered. Full partner-specific combat fusion is a future system.')}
+ else if(a==='lab'){if(state.zeni<500){status('Need 500 Zeni.');return}state.zeni-=500;state.training+=5;status('Fusion stability training +5')}
+ else if(a==='gravity'){state.training+=3;state.zeni+=40;flash('GRAVITY TRAINING');status('Gravity chamber complete · +3 training · +40 Zeni')}
+ else if(a==='charge'){state.training+=2;state.zeni+=25;flash('KI CHARGE');status('Charge training complete · +2 training · +25 Zeni')}
+ else if(a==='spar'){state.training+=2;state.zeni+=35;flash('COMBO FINISH');status('Sparring complete · +2 training · +35 Zeni')}
+ else if(a==='style'){state.style=(state.style+1)%6;flash(['SPIKY WARRIOR','WILD MANE','TIDY CUT','LONG FLOW','PRIMAL CREST','CELESTIAL CROWN'][state.style]);status('Character style preset changed. Procedural model shape varies by the existing game character generator.')}
+ else if(a==='trial'){state.training+=1;state.zeni+=Math.max(25,state.training*8);flash('TRAINING TRIAL');status('Trial cleared · training '+state.training)}
+ else if(a==='god'||a==='villain'||a==='crew'||a==='animal'){const list=a==='god'?gods:a==='villain'?villains:a==='crew'?crew:animals;status(list[i].name+': '+list[i].detail)}
+ save();render();
+}
+$('aaaOpen').onclick=()=>{$('aaaPanel').style.display='grid';render()};
+$('aaaClose').onclick=()=>{$('aaaPanel').style.display='none'};
+$('aaaGym').onclick=()=>{$('aaaPanel').style.display='grid';tab='gym';render()};
+$('aaaFuse').onclick=()=>{$('aaaPanel').style.display='grid';tab='fusion';render()};
+document.addEventListener('keydown',e=>{if(e.key==='Escape')$('aaaPanel').style.display='none';if(e.key.toLowerCase()==='u'&&!['INPUT','TEXTAREA'].includes(document.activeElement.tagName)){$('aaaPanel').style.display='grid';render()}});
+save();render();
+})();
+</script>
+
+
+<style>
+#pixelStudio{margin:10px 0;padding:12px;border:1px solid #8deeff55;border-radius:14px;background:#061426aa}
+#pixelStudio h2{margin:0 0 6px;font-size:19px;color:#baf8ff}
+#pixelStudio .pixelRow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0}
+#pixelStudio select,#pixelStudio input{background:#0a2038;color:#fff;border:1px solid #77dfff88;border-radius:8px;padding:7px}
+#pixelPreview{image-rendering:pixelated;width:192px;height:192px;max-width:100%;border:1px solid #77dfff88;background:#07101f;border-radius:8px}
+#pixelStudio small{color:#c6d8ec}
+</style>
+<script>
+(()=> {
+  const ready=()=>{
+    const win=document.querySelector('#aaaPanel .aaaWindow');
+    if(!win||document.getElementById('pixelStudio'))return;
+    const panel=document.createElement('section');panel.id='pixelStudio';
+    panel.innerHTML=`<h2>▦ Pixel Resolution & Sprite Studio</h2>
+      <small>Choose a clean 16:9 internal canvas. The preview uses pixelated scaling, while the 3D scene remains a separate rendering layer.</small>
+      <div class="pixelRow"><label for="pixelRes">Internal base</label><select id="pixelRes"><option value="640x360">640 × 360</option><option value="1280x720">1280 × 720</option><option value="1920x1080">1920 × 1080</option></select>
+      <label for="pixelSprite">Character sprite</label><select id="pixelSprite"><option>16 × 16 (map icon)</option><option>32 × 32 (classic)</option><option selected>48 × 48 (anime)</option><option>64 × 64 (detailed anime)</option></select></div>
+      <div class="pixelRow"><label for="pixelScale">Display mode</label><select id="pixelScale"><option value="fit">Fit screen (16:9)</option><option value="integer">Integer pixel scaling</option></select><button id="pixelApply">Apply settings</button><button id="pixelRedraw">Redraw sprite</button></div>
+      <div class="pixelRow"><canvas id="pixelPreview" width="48" height="48" aria-label="Pixel character preview"></canvas><div><b id="pixelReadout">640 × 360 · 48 × 48 sprite</b><small style="display:block;max-width:360px;margin-top:6px">Sprite sizes affect this pixel-art preview and its animation canvas; they do not automatically convert the existing 3D character models into fully animated sprite sheets.</small></div></div>`;
+    win.insertBefore(panel,win.children[2]||null);
+    const res=document.getElementById('pixelRes'), spr=document.getElementById('pixelSprite'), scale=document.getElementById('pixelScale'), read=document.getElementById('pixelReadout'), cv=document.getElementById('pixelPreview'), ctx=cv.getContext('2d');
+    const draw=()=>{
+      const size=parseInt(spr.value,10);cv.width=size;cv.height=size;ctx.imageSmoothingEnabled=false;
+      ctx.clearRect(0,0,size,size);
+      // Original pixel-art warrior sprite, generated at the selected grid size.
+      const px=size/16;const rect=(x,y,w,h,c)=>{ctx.fillStyle=c;ctx.fillRect(Math.round(x*px),Math.round(y*px),Math.ceil(w*px),Math.ceil(h*px))};
+      rect(5,1,6,2,'#17182b');rect(3,3,10,3,'#17182b');rect(4,4,8,3,'#f2c5a0');rect(3,5,2,2,'#17182b');rect(11,5,2,2,'#17182b');
+      rect(4,7,8,2,'#f2c5a0');rect(5,7,2,1,'#17244b');rect(9,7,2,1,'#17244b');rect(6,9,4,1,'#db8b6b');
+      rect(3,9,10,4,'#287ce0');rect(1,10,2,3,'#f2c5a0');rect(13,10,2,3,'#f2c5a0');
+      rect(4,13,3,2,'#f29c27');rect(9,13,3,2,'#f29c27');rect(4,15,3,1,'#24284a');rect(9,15,3,1,'#24284a');
+      // tiny aura pixels
+      rect(1,7,1,1,'#71efff');rect(14,7,1,1,'#71efff');rect(2,4,1,1,'#ffe98a');rect(13,4,1,1,'#ffe98a');
+      cv.style.width='192px';cv.style.height='192px';read.textContent=res.value.replace('x',' × ')+' · '+spr.value.replace(' (map icon)','').replace(' (classic)','').replace(' (anime)','').replace(' (detailed anime)','')+' sprite';
+    };
+    document.getElementById('pixelApply').onclick=()=>{
+      const [w,h]=res.value.split('x').map(Number);
+      try{localStorage.setItem('csr-display-settings',JSON.stringify({width:w,height:h,sprite:spr.value,scale:scale.value}))}catch(e){}
+      draw();
+      const status=document.getElementById('aaaStatus');if(status)status.textContent=`Display preference saved: ${w} × ${h}, ${spr.value}, ${scale.options[scale.selectedIndex].text}.`;
+    };
+    document.getElementById('pixelRedraw').onclick=draw;
+    try{const s=JSON.parse(localStorage.getItem('csr-display-settings')||'null');if(s){res.value=s.width+'x'+s.height;spr.value=s.sprite;scale.value=s.scale}}catch(e){}
+    draw();
+  };
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ready);else ready();
+  const oldOpen=document.getElementById('aaaOpen');
+  if(oldOpen)oldOpen.addEventListener('click',()=>setTimeout(ready,0));
+  const oldGym=document.getElementById('aaaGym');
+  if(oldGym)oldGym.addEventListener('click',()=>setTimeout(ready,0));
+  const oldFuse=document.getElementById('aaaFuse');
+  if(oldFuse)oldFuse.addEventListener('click',()=>setTimeout(ready,0));
+})();
+</script>
+
+
+<script>
+/* CSR_GRAPHICS_MONITOR_RUNTIME */
+(function(){
+ const $=id=>document.getElementById(id);
+ const panel=$('csrGraphicsPanel'); if(!panel)return;
+ const controls=$('csrGraphicsControls'), status=$('csrGraphicsStatus'), stats=$('csrGraphicsStats');
+ let collapsed=false, lastSample=performance.now(), frameCount=0, measuredFps=0;
+ function renderer(){return window.__csrRenderer||null}
+ function scene(){return window.__csrScene||null}
+ function applyResolution(){
+   const r=renderer(), c=r&&r.domElement, parts=$('csrResolution').value.split('x').map(Number), w=parts[0],h=parts[1];
+   window.__csrCustomResolution=true;
+   if(r&&c){
+     const q=$('csrQuality').value;
+     const dpr=1; // selected resolution is the actual internal render buffer; avoid device-pixel-ratio double scaling
+     r.setPixelRatio(dpr);
+     r.setSize(w,h,false);
+     c.style.width='100vw'; c.style.height='100vh'; c.style.maxWidth='100vw'; c.style.maxHeight='100vh';
+     const cam=window.__csrCamera;
+     if(cam){cam.aspect=w/h;cam.updateProjectionMatrix()}
+     status.textContent='Render buffer requested: '+w.toLocaleString()+' × '+h.toLocaleString()+'. Device/browser limits may apply.';
+   }else{
+     status.textContent='Renderer not detected yet. Resolution choice saved for this session.';
+   }
+ }
+ function applyQuality(){
+   const r=renderer(), q=$('csrQuality').value;
+   if(r){
+     // High/ultra increase render scale and texture sampling quality; source images remain unchanged.
+     r.setPixelRatio(1); // quality presets must not silently change the selected 4K render-buffer dimensions
+     if(r.shadowMap)r.shadowMap.enabled=(q==='high'||q==='ultra');
+     if(r.shadowMap && window.THREE)r.shadowMap.type=window.THREE.PCFSoftShadowMap;
+     if(r.capabilities){
+       const max=r.capabilities.maxTextureSize||0;
+       status.textContent='Quality: '+q.toUpperCase()+' · GPU maximum texture size: '+max.toLocaleString()+' px. 4K source textures are used only when the assets provide them.';
+     }
+   }
+   applyResolution();
+ }
+ function gather(){
+   const r=renderer(), s=scene();
+   let meshes=0,vertices=0,triangles=0,objects=0,textureSet=new Set(),geometrySet=new Set();
+   if(s&&typeof s.traverse==='function'){
+     s.traverse(o=>{
+       objects++;
+       if(o&&o.isMesh){
+         meshes++;
+         const g=o.geometry;
+         if(g&&!geometrySet.has(g)){
+           geometrySet.add(g);
+           const p=g.attributes&&g.attributes.position;
+           if(p)vertices+=p.count;
+           triangles+=g.index?Math.floor(g.index.count/3):(p?Math.floor(p.count/3):0);
+         }
+         const mats=Array.isArray(o.material)?o.material:[o.material];
+         mats.forEach(m=>{if(m)Object.keys(m).forEach(k=>{const v=m[k];if(v&&v.isTexture)textureSet.add(v)})});
+       }
+     });
+   }
+   const info=r&&r.info;
+   return {
+     meshes:meshes,
+     vertices:vertices,
+     triangles:info&&info.render&&Number.isFinite(info.render.triangles)?info.render.triangles:triangles,
+     drawCalls:info&&info.render?info.render.calls:0,
+     textures:info&&info.memory?info.memory.textures:textureSet.size,
+     objects:objects,
+     maxTexture:r&&r.capabilities?r.capabilities.maxTextureSize:'—',
+     hasScene:!!s
+   };
+ }
+ function updateStats(){
+   const d=gather(), budget=Number($('csrTriBudget').value);
+   const rows=[
+     ['FPS (measured)',measuredFps.toFixed(0)],
+     ['Meshes',d.meshes.toLocaleString()],
+     ['Vertices',d.vertices.toLocaleString()],
+     ['Triangles / frame',d.triangles.toLocaleString()],
+     ['Draw calls / frame',d.drawCalls.toLocaleString()],
+     ['GPU textures',Number(d.textures||0).toLocaleString()],
+     ['Scene objects',d.objects.toLocaleString()],
+     ['GPU max texture',d.maxTexture==='—'?'—':Number(d.maxTexture).toLocaleString()+' px']
+   ];
+   stats.innerHTML=rows.map(([k,v])=>'<div style="background:#122039;padding:6px;border-radius:6px"><div style="opacity:.7">'+k+'</div><b>'+v+'</b></div>').join('');
+   const over=d.triangles>budget;
+   status.textContent=(d.hasScene?'Scene geometry inspected':'Waiting for scene')+' · '+(over?'Over':'Within')+' selected triangle threshold ('+budget.toLocaleString()+') · '+$('csrFps').value+' FPS cap selected. Budget does not generate geometry.';
+ }
+ $('csrResolution').addEventListener('change',applyResolution);
+ $('csrFps').addEventListener('change',()=>{window.__csrFpsCap=Number($('csrFps').value)||40;});
+ $('csrQuality').addEventListener('change',applyQuality);
+ $('csrTriBudget').addEventListener('change',updateStats);
+ $('csrGraphicsToggle').addEventListener('click',()=>{
+   collapsed=!collapsed;controls.style.display=collapsed?'none':'grid';
+   status.style.display=collapsed?'none':'block';stats.style.display=collapsed?'none':'grid';
+   panel.querySelectorAll('div').forEach(el=>{if(el.id==='csrGraphicsControls'||el.id==='csrGraphicsStatus'||el.id==='csrGraphicsStats')return;});
+   $('csrGraphicsToggle').textContent=collapsed?'Show':'Hide';
+ });
+ function sample(t){
+   frameCount++;
+   if(t-lastSample>=1000){measuredFps=frameCount*1000/(t-lastSample);frameCount=0;lastSample=t;updateStats();}
+   requestAnimationFrame(sample);
+ }
+ const saved=(()=>{try{return JSON.parse(localStorage.getItem('csr-graphics-settings')||'null')}catch(e){return null}})();
+ if(saved){
+   $('csrResolution').value='3840x2160';
+   if(saved.fps)$('csrFps').value=saved.fps;
+   if(saved.quality)$('csrQuality').value=saved.quality;
+   $('csrTriBudget').value='999000000';
+ }
+ function persist(){
+   try{localStorage.setItem('csr-graphics-settings',JSON.stringify({resolution:$('csrResolution').value,fps:$('csrFps').value,quality:$('csrQuality').value,budget:$('csrTriBudget').value}))}catch(e){}
+ }
+ ['csrResolution','csrFps','csrQuality','csrTriBudget'].forEach(id=>$(id).addEventListener('change',persist));
+ window.__csrFpsCap=Number($('csrFps').value)||40;
+ applyResolution(); applyQuality(); updateStats(); requestAnimationFrame(sample);
+})();
+</script>
+
+</body></html>
